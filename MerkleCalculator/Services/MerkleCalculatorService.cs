@@ -5,7 +5,7 @@ namespace MerkleCalculator.Services;
 
 public class MerkleCalculatorService : IMerkleCalculationsService
 {
-    public byte[] GetMerkleRoot(string[] elements, string leaftag, string branchTag)
+    public string GetMerkleRoot(string[] elements, string leaftag, string branchTag)
     {
         ValidateParameters(elements, leaftag, branchTag);
 
@@ -16,10 +16,10 @@ public class MerkleCalculatorService : IMerkleCalculationsService
             treeNodes = CalculateNextTreeLevel(treeNodes, branchTag);
         }
 
-        return treeNodes.First();
+        return ConvertHelper.ToHexString(treeNodes.First());
     }
 
-    public async Task<byte[]> GetMerkleRootAsync(string[] elements, string leaftag, string branchTag, int threadCount)
+    public async Task<string> GetMerkleRootAsync(string[] elements, string leaftag, string branchTag, int threadCount)
     {
         ValidateParameters(elements, leaftag, branchTag);
 
@@ -30,7 +30,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
             treeNodes = await CalculateNextTreeLevelAsync(treeNodes, branchTag, threadCount);
         }
 
-        return treeNodes.First();
+        return ConvertHelper.ToHexString(treeNodes.First());
     }
 
     private void ValidateParameters(string[] elements, string leaftag, string branchTag)
@@ -45,7 +45,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
             throw new ArgumentException("You need to provide tag to create hash for leaves");
         }
 
-        if (!string.IsNullOrEmpty(branchTag))
+        if (string.IsNullOrEmpty(branchTag))
         {
             throw new ArgumentException("You need to provide hash for branches");
         }
@@ -124,7 +124,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
         batchBlock.LinkTo(calculateHashBlock, new DataflowLinkOptions() { PropagateCompletion = true });
         calculateHashBlock.LinkTo(results);
 
-        foreach (var element in elements) 
+        foreach (var element in elements)
         {
             batchBlock.Post(element);
         }

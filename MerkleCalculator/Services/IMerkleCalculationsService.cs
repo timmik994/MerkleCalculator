@@ -8,7 +8,7 @@ namespace MerkleCalculator.Services;
 
 interface IMerkleCalculationsService
 {
-    byte[] GetMerkleRoot(string[] elements, string leaftag, string branchTag);
+    string GetMerkleRoot(string[] elements, string leaftag, string branchTag);
 
-    Task<byte[]> GetMerkleRootAsync(string[] elements, string leaftag, string branchTag, int threadCount = 4);
+    Task<string> GetMerkleRootAsync(string[] elements, string leaftag, string branchTag, int threadCount = 4);
 }

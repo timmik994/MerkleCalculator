@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35828.75 d17.13
+VisualStudioVersion = 17.13.35828.75
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerkleCalculator", "MerkleCalculator\MerkleCalculator.csproj", "{9EAB2ADF-9195-4906-9F4F-793933FEE22E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MerkleCalculatorTest", "MerkleCalculatorTest\MerkleCalculatorTest.csproj", "{223A9322-268F-46C3-9D72-96AD540256CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{9EAB2ADF-9195-4906-9F4F-793933FEE22E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EAB2ADF-9195-4906-9F4F-793933FEE22E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EAB2ADF-9195-4906-9F4F-793933FEE22E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{223A9322-268F-46C3-9D72-96AD540256CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{223A9322-268F-46C3-9D72-96AD540256CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{223A9322-268F-46C3-9D72-96AD540256CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{223A9322-268F-46C3-9D72-96AD540256CD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -17,14 +17,21 @@ public static class HashHelper
     /// <returns>The hash result.</returns>
     public static byte[] CalculateTaggedHash(string input, string tag)
     {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+        byte[] inputBytes = ConvertHelper.GetBytesFromString(input);
         return CalculateTaggedHash(inputBytes, tag);
     }
 
+    /// <summary>
+    /// Calculates hash by formula:
+    /// SHA256(SHA256(tag)+SHA256(tag)+input)
+    /// </summary>
+    /// <param name="input">The input bytes.</param>
+    /// <param name="tag">The tag to use.</param>
+    /// <returns>The hash result.</returns>
     public static byte[] CalculateTaggedHash(byte[] input, string tag) 
     {
         using SHA256 sha256Hash = SHA256.Create();
-        byte[] tagBytes = Encoding.UTF8.GetBytes(tag);
+        byte[] tagBytes = ConvertHelper.GetBytesFromString(tag);
 
         byte[] tagHash = sha256Hash.ComputeHash(tagBytes);
 
