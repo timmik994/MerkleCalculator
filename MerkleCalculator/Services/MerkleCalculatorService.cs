@@ -16,7 +16,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
             treeNodes = CalculateNextTreeLevel(treeNodes, branchTag);
         }
 
-        return ConvertHelper.ToHexString(treeNodes.First());
+        return ConvertHelper.ShowHashAsString(treeNodes.First());
     }
 
     public async Task<string> GetMerkleRootAsync(string[] elements, string leaftag, string branchTag, int threadCount)
@@ -30,7 +30,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
             treeNodes = await CalculateNextTreeLevelAsync(treeNodes, branchTag, threadCount);
         }
 
-        return ConvertHelper.ToHexString(treeNodes.First());
+        return ConvertHelper.ShowHashAsString(treeNodes.First());
     }
 
     private void ValidateParameters(string[] elements, string leaftag, string branchTag)
@@ -95,6 +95,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
         {
             calculateHashBlock.Post(element);
         }
+
         calculateHashBlock.Complete();
         await calculateHashBlock.Completion.ConfigureAwait(false);
 
