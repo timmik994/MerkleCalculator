@@ -7,7 +7,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
 {
     public string GetMerkleRoot(string[] elements, string leaftag, string branchTag)
     {
-        ValidateParameters(elements, leaftag, branchTag);
+        ValidateMerkleRootParameters(elements, leaftag, branchTag);
 
         var treeNodes = CalculateLeafs(elements, leaftag);
 
@@ -21,7 +21,7 @@ public class MerkleCalculatorService : IMerkleCalculationsService
 
     public async Task<string> GetMerkleRootAsync(string[] elements, string leaftag, string branchTag, int threadCount)
     {
-        ValidateParameters(elements, leaftag, branchTag);
+        ValidateMerkleRootParameters(elements, leaftag, branchTag);
 
         var treeNodes = await CalculateLeafsAsync(elements, leaftag, threadCount);
 
@@ -33,7 +33,88 @@ public class MerkleCalculatorService : IMerkleCalculationsService
         return ConvertHelper.ShowHashAsString(treeNodes.First());
     }
 
-    private void ValidateParameters(string[] elements, string leaftag, string branchTag)
+    public MerkleProofData GetMerkleProof(string[] elements, int targetElementIndex, string leaftag, string branchTag)
+    {
+        ValidateMerkleProofParameters(elements, targetElementIndex, leaftag, branchTag);
+        var treeNodes = CalculateLeafs(elements, leaftag);
+
+        List<MerkleProofItem> merkleProofPath = new()
+        {
+            CreateProofItem(targetElementIndex, treeNodes)
+        };
+
+        targetElementIndex = targetElementIndex / 2;
+        while (treeNodes.Count > 1)
+        {
+            treeNodes = CalculateNextTreeLevel(treeNodes, branchTag);
+
+            if (treeNodes.Count == 1)
+            {
+                //We do not merkle root in merkle proof path. it will be returned separetly.
+                break;
+            }
+
+            var proofPathItem = CreateProofItem(targetElementIndex, treeNodes);
+            merkleProofPath.Add(proofPathItem);
+            targetElementIndex = targetElementIndex / 2;
+        }
+
+        return new(merkleProofPath, ConvertHelper.ShowHashAsString(treeNodes.First()));
+    }
+
+    public async Task<MerkleProofData> GetMerkleProofAsync(string[] elements, int targetElementIndex, string leaftag, string branchTag, int threadCount = 4)
+    {
+        ValidateMerkleProofParameters(elements, targetElementIndex, leaftag, branchTag);
+        var treeNodes = await CalculateLeafsAsync(elements, leaftag, threadCount);
+
+        List<MerkleProofItem> merkleProofPath = new()
+        {
+            CreateProofItem(targetElementIndex, treeNodes)
+        };
+
+        targetElementIndex = targetElementIndex / 2;
+        while (treeNodes.Count > 1)
+        {
+            treeNodes = await CalculateNextTreeLevelAsync(treeNodes, branchTag, threadCount);
+
+            if (treeNodes.Count == 1)
+            {
+                //We do not merkle root in merkle proof path. it will be returned separetly.
+                break;
+            }
+
+            var proofPathItem = CreateProofItem(targetElementIndex, treeNodes);
+            merkleProofPath.Add(proofPathItem);
+            targetElementIndex = targetElementIndex / 2;
+        }
+
+        return new(merkleProofPath, ConvertHelper.ShowHashAsString(treeNodes.First()));
+    }
+
+    private void ValidateMerkleProofParameters(string[] elements, int targetElementIndex, string leaftag, string branchTag)
+    {
+        if (!elements.Any())
+        {
+            throw new ArgumentException("elements Array can not be empty");
+        }
+
+        if (targetElementIndex >= elements.Length)
+        {
+            throw new ArgumentException("Target index is out of range");
+        }
+
+        if (string.IsNullOrEmpty(leaftag))
+        {
+            throw new ArgumentException("You need to provide tag to create hash for leaves");
+        }
+
+        if (string.IsNullOrEmpty(branchTag))
+        {
+            throw new ArgumentException("You need to provide hash for branches");
+        }
+    }
+
+    private void ValidateMerkleRootParameters(string[] elements, string leaftag, string branchTag)
     {
         if (!elements.Any())
         {
@@ -48,6 +129,21 @@ public class MerkleCalculatorService : IMerkleCalculationsService
         if (string.IsNullOrEmpty(branchTag))
         {
             throw new ArgumentException("You need to provide hash for branches");
+        }
+    }
+
+    private MerkleProofItem CreateProofItem(int targetIndex, List<byte[]> elements)
+    {
+        bool isElementRight = targetIndex % 2 == 1;
+
+        if (isElementRight)
+        {
+            return new(false, ConvertHelper.ShowHashAsString(elements[targetIndex - 1]));
+        }
+        else
+        {
+            var pathElement = targetIndex + 1 >= elements.Count ? elements[targetIndex] : elements[targetIndex + 1];
+            return new(true, ConvertHelper.ShowHashAsString(pathElement));
         }
     }
 
