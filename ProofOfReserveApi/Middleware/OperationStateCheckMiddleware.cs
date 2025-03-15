@@ -15,7 +15,7 @@ public class OperationStateCheckMiddleware
     public async Task InvokeAsync(HttpContext context, IMaintenanceStateService maintenanceStateService)
     {
         //We do not apply this middleware for health endpoint.
-        if (context.Request.Path.StartsWithSegments("health"))
+        if (context.Request.Path.StartsWithSegments("/health"))
         {
             await _next(context);
         }
