@@ -3,7 +3,7 @@
 /// <summary>
 /// Service that calculates merkle tree related values.
 /// </summary>
-interface IMerkleCalculationsService
+public interface IMerkleCalculationsService
 {
     /// <summary>
     /// Gets merkle root.

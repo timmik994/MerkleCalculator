@@ -1,8 +1,8 @@
 ﻿namespace ProofOfReserveApi.Models;
 
-public class MerkleRootValue
+public class MerkleRootApiModel
 {
-    public MerkleRootValue(string merkleRoot)
+    public MerkleRootApiModel(string merkleRoot)
     {
         MerkleRoot = merkleRoot;
     }

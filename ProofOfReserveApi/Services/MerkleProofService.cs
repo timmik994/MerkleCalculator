@@ -10,11 +10,11 @@ public class MerkleProofService : IMerkleProofService
     private const string LeafTag = "ProofOfReserve_Leaf";
     private const string BranchTag = "ProofOfReserve_Branch";
 
-    private readonly MerkleCalculatorService merkleCalculatorService;
+    private readonly IMerkleCalculationsService merkleCalculatorService;
     private readonly IUserBalanceStorage storage;
     private readonly ILogger logger;
 
-    public MerkleProofService(MerkleCalculatorService merkleCalculatorService, IUserBalanceStorage storage, ILogger<MerkleProofService> logger)
+    public MerkleProofService(IMerkleCalculationsService merkleCalculatorService, IUserBalanceStorage storage, ILogger<MerkleProofService> logger)
     {
         this.merkleCalculatorService = merkleCalculatorService;
         this.storage = storage;
@@ -52,7 +52,7 @@ public class MerkleProofService : IMerkleProofService
 
     }
 
-    public async Task<MerkleRootValue?> GetMerkleRoot()
+    public async Task<MerkleRootApiModel?> GetMerkleRoot()
     {
         var userBalances = storage.GetAllUsers().Select(u => u.ToString()).ToArray();
         if (!userBalances.Any()) 

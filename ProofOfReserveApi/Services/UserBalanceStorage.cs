@@ -64,6 +64,8 @@ public class UserBalanceStorage : IUserBalanceStorage
             return null;
         }
 
-        return new(int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value);
+        int userId = int.Parse(match.Groups[1].Value);
+        int userBalance = int.Parse(match.Groups[2].Value);
+        return new(userId, userBalance);
     }
 }

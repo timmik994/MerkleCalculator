@@ -1,4 +1,7 @@
-﻿using ProofOfReserveApi.Services;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProofOfReserveApi.Models;
+using ProofOfReserveApi.Services;
+using System.Net;
 
 namespace ProofOfReserveApi.Extensions;
 
@@ -6,35 +9,41 @@ public static class AddEndpointsExtension
 {
     public static void MapUpdateEndpoint(this WebApplication app)
     {
-        app.MapPost("/users/update", async (HttpRequest httpReq, IMaintenanceStateService maintenanceService, IUserBalanceStorage balanceStorage) =>
+        var pushDataEndpoint = app.MapPost("/maintenance/pushdata", async (HttpRequest httpReq, IMaintenanceStateService maintenanceService, IUserBalanceStorage balanceStorage) =>
         {
             maintenanceService.StartMaintenance();
 
             using StreamReader sr = new StreamReader(httpReq.Body);
-            while (!sr.EndOfStream)
+            string? userBalanceLine;
+            do
             {
-                string? balanceStr = await sr.ReadLineAsync();
-                if (string.IsNullOrWhiteSpace(balanceStr))
+                userBalanceLine = await sr.ReadLineAsync();
+                if (string.IsNullOrWhiteSpace(userBalanceLine))
                 {
                     continue;
                 }
 
-                balanceStorage.AddOrUpdateUser(balanceStr);
+                balanceStorage.AddOrUpdateUser(userBalanceLine);
             }
+            while (!string.IsNullOrEmpty(userBalanceLine));
 
             maintenanceService.StopMaintenance();
             return Results.Ok();
         });
+
+        pushDataEndpoint.Accepts<string>("text/plain");
+        pushDataEndpoint.WithDisplayName("Push user balances");
+        pushDataEndpoint.WithDescription("Adds new users to database, and updates balances for existing users");
     }
 
-    public static void MapUserApiEndpoints(this WebApplication app) 
+    public static void MapUserApiEndpoints(this WebApplication app)
     {
         var endpoints = app.MapGroup("/reserve");
 
-        endpoints.MapGet("/root", async (IMerkleProofService merkleProofService) =>
+        var rootEndpoint = endpoints.MapGet("/root", async (IMerkleProofService merkleProofService) =>
         {
             var merkleRoot = await merkleProofService.GetMerkleRoot();
-            if(merkleRoot == null)
+            if (merkleRoot == null)
             {
                 return Results.InternalServerError();
             }
@@ -42,7 +51,11 @@ public static class AddEndpointsExtension
             return Results.Ok(merkleRoot);
         });
 
-        endpoints.MapGet("/proof/{userId:int}", async (int userId, IUserBalanceStorage storage, IMerkleProofService proofService) =>
+        rootEndpoint.WithDisplayName("Merkle root");
+        rootEndpoint.WithDescription("Get merkle root for all users.");
+        rootEndpoint.Produces((int)HttpStatusCode.OK, typeof(MerkleRootApiModel));
+
+        var proofEndpoint = endpoints.MapGet("/proof/{userId:int}", async ([FromRoute]int userId, IUserBalanceStorage storage, IMerkleProofService proofService) =>
         {
             if (!storage.UserExists(userId))
             {
@@ -57,5 +70,9 @@ public static class AddEndpointsExtension
 
             return Results.Ok(proofData);
         });
+
+        proofEndpoint.WithDisplayName("Merkle Proof");
+        proofEndpoint.WithDescription("Gets proof of reserve for the specific user");
+        proofEndpoint.Produces((int)HttpStatusCode.OK, typeof(ProofOfReserveApiModel));
     }
 }

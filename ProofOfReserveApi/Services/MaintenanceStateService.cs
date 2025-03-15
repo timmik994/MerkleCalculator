@@ -2,7 +2,7 @@
 
 public class MaintenanceStateService : IMaintenanceStateService
 {
-    private volatile bool serviceActive;
+    private volatile bool serviceActive = true;
 
     private readonly ILogger logger;
 

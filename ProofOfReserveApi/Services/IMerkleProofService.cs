@@ -11,7 +11,7 @@ public interface IMerkleProofService
     /// Gets merkle root from all users in database.
     /// </summary>
     /// <returns>The calculated merkle root.</returns>
-    Task<MerkleRootValue?> GetMerkleRoot();
+    Task<MerkleRootApiModel?> GetMerkleRoot();
 
     /// <summary>
     /// Calculates merkle proof for specific user.
