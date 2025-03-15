@@ -38,6 +38,7 @@ public static class AddEndpointsExtension
         pushDataEndpoint.Accepts<string>("text/plain");
         pushDataEndpoint.WithDisplayName("Push user balances");
         pushDataEndpoint.WithDescription("Adds new users to database, and updates balances for existing users");
+        pushDataEndpoint.Produces(StatusCodes.Status200OK);
     }
 
     /// <summary>
@@ -61,7 +62,7 @@ public static class AddEndpointsExtension
 
         rootEndpoint.WithDisplayName("Merkle root");
         rootEndpoint.WithDescription("Get merkle root for all users.");
-        rootEndpoint.Produces((int)HttpStatusCode.OK, typeof(MerkleRootApiModel));
+        rootEndpoint.Produces(StatusCodes.Status200OK, typeof(MerkleRootApiModel));
 
         var proofEndpoint = endpoints.MapGet("/proof/{userId:int}", async ([FromRoute]int userId, IUserBalanceStorage storage, IMerkleProofService proofService) =>
         {
@@ -81,6 +82,7 @@ public static class AddEndpointsExtension
 
         proofEndpoint.WithDisplayName("Merkle Proof");
         proofEndpoint.WithDescription("Gets proof of reserve for the specific user");
-        proofEndpoint.Produces((int)HttpStatusCode.OK, typeof(ProofOfReserveApiModel));
+        proofEndpoint.Produces(StatusCodes.Status200OK, typeof(ProofOfReserveApiModel));
+        proofEndpoint.Produces(StatusCodes.Status404NotFound);
     }
 }
