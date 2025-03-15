@@ -4,9 +4,9 @@ namespace ProofOfReserveApi.Extensions;
 
 public static class AddEndpointsExtension
 {
-    public static void AddUpdateEndpoint(this WebApplication app)
+    public static void MapUpdateEndpoint(this WebApplication app)
     {
-        app.MapPost("/balance/update", async (HttpRequest httpReq, IMaintenanceStateService maintenanceService, IUserBalanceStorage balanceStorage) =>
+        app.MapPost("/users/update", async (HttpRequest httpReq, IMaintenanceStateService maintenanceService, IUserBalanceStorage balanceStorage) =>
         {
             maintenanceService.StartMaintenance();
 
@@ -27,7 +27,35 @@ public static class AddEndpointsExtension
         });
     }
 
-    public static void AddUserApiEndpoints(this WebApplication app) 
-    { 
+    public static void MapUserApiEndpoints(this WebApplication app) 
+    {
+        var endpoints = app.MapGroup("/reserve");
+
+        endpoints.MapGet("/root", async (IMerkleProofService merkleProofService) =>
+        {
+            var merkleRoot = await merkleProofService.GetMerkleRoot();
+            if(merkleRoot == null)
+            {
+                return Results.InternalServerError();
+            }
+
+            return Results.Ok(merkleRoot);
+        });
+
+        endpoints.MapGet("/proof/{userId:int}", async (int userId, IUserBalanceStorage storage, IMerkleProofService proofService) =>
+        {
+            if (!storage.UserExists(userId))
+            {
+                return Results.NotFound();
+            }
+
+            var proofData = await proofService.GetMerkleProof(userId);
+            if (proofData == null)
+            {
+                return Results.InternalServerError();
+            }
+
+            return Results.Ok(proofData);
+        });
     }
 }
