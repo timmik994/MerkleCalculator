@@ -1,6 +1,8 @@
 using MerkleCalculator.Extensions;
+using Microsoft.AspNetCore.Http.HttpResults;
 using ProofOfReserveApi.HealthChecks;
 using ProofOfReserveApi.Middleware;
+using ProofOfReserveApi.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +13,8 @@ builder.Services.AddHealthChecks()
 var app = builder.Build();
 
 app.MapHealthChecks("/health");
+
+
 
 app.UseMiddleware<OperationStateCheckMiddleware>();
 

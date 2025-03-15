@@ -13,6 +13,6 @@ public class UserBalance
 
     public override string ToString()
     {
-        return $"({Id},{Balance})"; 
+        return $"({Id},{Balance})"; //Write iser balance to tuple format required in specs.
     }
 }
