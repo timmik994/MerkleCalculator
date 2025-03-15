@@ -1,7 +1,5 @@
 using MerkleCalculator.Extensions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
-using Microsoft.Extensions.DependencyInjection;
 using ProofOfReserveApi.Extensions;
 using ProofOfReserveApi.HealthChecks;
 using ProofOfReserveApi.Middleware;
@@ -42,5 +40,10 @@ app.UseMiddleware<OperationStateCheckMiddleware>();
 
 app.MapUpdateEndpoint();
 app.MapUserApiEndpoints();
+
+if (app.Environment.IsDevelopment())
+{
+    app.PushInitialData();
+}
 
 app.Run();

@@ -57,6 +57,7 @@ public class UserBalanceStorage : IUserBalanceStorage
 
     private UserBalance? ParseUserData(string userData) 
     {
+        userData = userData.Trim();
         var match = Regex.Match(userData, UserBalanceDataRegex);
         if (!match.Success) 
         {
