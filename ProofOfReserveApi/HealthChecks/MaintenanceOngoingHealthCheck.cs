@@ -3,6 +3,9 @@ using ProofOfReserveApi.Services;
 
 namespace ProofOfReserveApi.HealthChecks;
 
+/// <summary>
+/// This health check checks does maintenance ongoing and returns unhealthy response if it is.
+/// </summary>
 public class MaintenanceOngoingHealthCheck : IHealthCheck
 {
     private readonly IMaintenanceStateService maintenanceStateService;

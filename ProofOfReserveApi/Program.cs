@@ -32,8 +32,8 @@ app.MapOpenApi();
 
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/openapi/ServiceMaintenance.json", "ServiceMaintenance.json");
     options.SwaggerEndpoint("/openapi/ProofOfReserve.json", "ProofOfReserve.json");
+    options.SwaggerEndpoint("/openapi/ServiceMaintenance.json", "ServiceMaintenance.json");
 });
 
 app.UseMiddleware<OperationStateCheckMiddleware>();

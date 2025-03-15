@@ -7,6 +7,10 @@ namespace ProofOfReserveApi.Extensions;
 
 public static class AddEndpointsExtension
 {
+    /// <summary>
+    /// Adds endpoints responsinle for service maintenance.
+    /// </summary>
+    /// <param name="app">The web app.</param>
     public static void MapUpdateEndpoint(this WebApplication app)
     {
         var pushDataEndpoint = app.MapPost("/maintenance/pushdata", async (HttpRequest httpReq, IMaintenanceStateService maintenanceService, IUserBalanceStorage balanceStorage) =>
@@ -36,6 +40,10 @@ public static class AddEndpointsExtension
         pushDataEndpoint.WithDescription("Adds new users to database, and updates balances for existing users");
     }
 
+    /// <summary>
+    /// Adds endpoints responsible for proof of reserve API.
+    /// </summary>
+    /// <param name="app">The web app</param>
     public static void MapUserApiEndpoints(this WebApplication app)
     {
         var endpoints = app.MapGroup("/reserve");
